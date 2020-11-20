@@ -20,9 +20,9 @@ class Background {
     this.footerImg = new Image();
     this.footerImg.src = 'assets/img/game-bg-footer.png';
     this.footerImg.isReady = false;
+    this.footerImg.height = 64;
     this.footerImg.onload = () => {
       this.footerImg.isReady = true;
-      this.footerImg.height = 70;
       this.footerImg.width = this.width;
     }
   }

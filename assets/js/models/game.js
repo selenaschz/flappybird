@@ -15,7 +15,12 @@ class Game {
       70,
       Math.floor(this.canvas.height / 2),
     );
+
+    this.pipes = [];
+    this.drawPipesCount = 0;
+    this.pipesFrequency = 100;
   }
+  
 
   onKeyEvent(event) {
     this.flappybird.onKeyEvent(event);
@@ -27,6 +32,7 @@ class Game {
         this.clear();
         this.move();
         this.draw();
+        this.addPipes();
         this.checkCollisions();
       }, this.fps)
     }
@@ -38,16 +44,38 @@ class Game {
   }
 
   clear() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.pipes = this.pipes.filter(pipe => pipe.x + pipe.width >= 0);
   }
 
   move() {
     this.background.move();
     this.flappybird.move();
+    this.pipes.forEach(pipe => pipe.move());
+  }
+
+  addPipes() {
+    if (this.flappybird.sprite.isReady && (this.drawPipesCount % this.pipesFrequency === 0)) {
+      console.log('entro')
+      this.pipes = this.pipes.concat(this.randPairOfPipes());
+      this.drawPipesCount = 0;
+    }
+  }
+
+  randPairOfPipes() {
+    const space = this.canvas.height - this.background.footerImg.height;
+    const gap = (this.flappybird.height * 2) + this.flappybird.jumpImpulse;
+    const topSize = Math.floor(Math.random() * (space - gap) * 0.75)
+    const bottomSize = space - topSize - gap;
+    return [
+      new Pipe(this.ctx, this.canvas.width, 0, topSize, 'top'),
+      new Pipe(this.ctx, this.canvas.width, this.canvas.height - this.background.footerImg.height - bottomSize, bottomSize, 'bottom'),
+    ]
   }
 
   checkCollisions() {
-    if ((this.flappybird.y + this.flappybird.height) >= this.background.y) {
+    const pipe = this.pipes.some(pipe => this.flappybird.collides(pipe));
+    if (pipe || (this.flappybird.y + this.flappybird.height) >= this.background.y) {
       this.stop();
     }
   }
@@ -55,5 +83,7 @@ class Game {
   draw() {
     this.background.draw();
     this.flappybird.draw();
+    this.pipes.forEach(pipe => pipe.draw());
+    this.drawPipesCount++;
   }
 }
