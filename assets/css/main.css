@@ -6,7 +6,6 @@
        url('../fonts/flappyfont.ttf')  format('truetype');/* Safari, Android, iOS */
 }
 
-
 html, body {
   margin: 0;
   padding: 0;
@@ -27,4 +26,14 @@ body * {
   justify-content: center;
   flex-direction: column;
   height: 100%;
+}
+
+#restart-btn {
+  width: 100%;
+  max-width: 150px;
+  position: absolute;
+}
+
+.hidden {
+  display: none;
 }
