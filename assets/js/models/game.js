@@ -1,6 +1,6 @@
 class Game {
 
-  constructor(canvasId) {
+  constructor(canvasId, onGameEnd) {
     this.canvas = document.getElementById(canvasId);
     this.canvas.width = 384;
     this.canvas.height = 498;
@@ -19,6 +19,9 @@ class Game {
     this.pipes = [];
     this.drawPipesCount = 0;
     this.pipesFrequency = 100;
+    this.score = 0;
+    this.bestScore = Number(localStorage.getItem('best-score') || 0);
+    this.onGameEnd = onGameEnd;
   }
   
 
@@ -34,6 +37,7 @@ class Game {
         this.draw();
         this.addPipes();
         this.checkCollisions();
+        this.checkScore();
       }, this.fps)
     }
   }
@@ -41,6 +45,23 @@ class Game {
   stop() {
     clearInterval(this.drawIntervalId);
     this.drawIntervalId = undefined;
+  }
+
+  restart() {
+    this.score = 0;
+    this.pipes = [];
+    this.flappybird.x = 70;
+    this.flappybird.y = Math.floor(this.canvas.height / 2);
+    this.start();
+  }
+
+  end() {
+    this.stop();
+    if (this.score > this.bestScore) {
+      this.bestScore = this.score;
+      localStorage.setItem('best-score', this.bestScore)
+    }
+    this.onGameEnd();
   }
 
   clear() {
@@ -56,7 +77,6 @@ class Game {
 
   addPipes() {
     if (this.flappybird.sprite.isReady && (this.drawPipesCount % this.pipesFrequency === 0)) {
-      console.log('entro')
       this.pipes = this.pipes.concat(this.randPairOfPipes());
       this.drawPipesCount = 0;
     }
@@ -76,7 +96,19 @@ class Game {
   checkCollisions() {
     const pipe = this.pipes.some(pipe => this.flappybird.collides(pipe));
     if (pipe || (this.flappybird.y + this.flappybird.height) >= this.background.y) {
-      this.stop();
+      this.end();
+    }
+  }
+
+  checkScore() {
+    const pipe = this.pipes
+      .filter(pipe => pipe.mode === 'top')
+      .filter(pipe => !pipe.isChecked)
+      .find(pipe => pipe.x + pipe.width < this.flappybird.x);
+
+    if (pipe) {
+      pipe.isChecked = true;
+      this.score++;
     }
   }
 
@@ -85,5 +117,22 @@ class Game {
     this.flappybird.draw();
     this.pipes.forEach(pipe => pipe.draw());
     this.drawPipesCount++;
+
+    this.ctx.save();
+    this.ctx.font = "30px FlappyFont";
+    this.ctx.fillStyle = "#FFFFFF";
+    this.ctx.fillText(
+      this.score,
+      10,
+      40,
+    )
+    this.ctx.font = "20px FlappyFont";
+    this.ctx.fillStyle = "#73bf2e";
+    this.ctx.fillText(
+      `best: ${this.bestScore}`,
+      10,
+      this.canvas.height - 10,
+    )
+    this.ctx.restore();
   }
 }
