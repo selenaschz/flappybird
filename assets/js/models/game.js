@@ -9,130 +9,70 @@ class Game {
     this.drawIntervalId = undefined;
     this.fps = 1000 / 60;
 
-    this.background = new Background(this.ctx);
-    this.flappybird = new FlappyBird(
-      this.ctx,
-      70,
-      Math.floor(this.canvas.height / 2),
-    );
+    // iteration 1: setup the backgound
+
+    // iteration 2: setup the flappy
+
+    // iteration 2: setup the flappy
 
     this.pipes = [];
     this.drawPipesCount = 0;
     this.pipesFrequency = 100;
-    this.score = 0;
-    this.bestScore = Number(localStorage.getItem('best-score') || 0);
-    this.onGameEnd = onGameEnd;
+
+    // bonus: setup the score
   }
   
 
   onKeyEvent(event) {
-    this.flappybird.onKeyEvent(event);
+    // iteration 2: link flappy key events
   }
 
   start() {
-    if (!this.drawIntervalId) {
-      this.drawIntervalId = setInterval(() => {
-        this.clear();
-        this.move();
-        this.draw();
-        this.addPipes();
-        this.checkCollisions();
-        this.checkScore();
-      }, this.fps)
-    }
+    // Iteration 1: each 60f clear - move - draw - [next iterations: addPipes - checkCollisions - checkScore]
   }
 
   stop() {
-    clearInterval(this.drawIntervalId);
-    this.drawIntervalId = undefined;
+    // Iteration 1: stop the game
   }
 
   restart() {
-    this.score = 0;
-    this.pipes = [];
-    this.flappybird.x = 70;
-    this.flappybird.y = Math.floor(this.canvas.height / 2);
-    this.start();
+    // Bonus: restart on demand
   }
 
   end() {
-    this.stop();
-    if (this.score > this.bestScore) {
-      this.bestScore = this.score;
-      localStorage.setItem('best-score', this.bestScore)
-    }
-    this.onGameEnd();
+    // Iteration 4: stop the game and setup score
   }
 
   clear() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.pipes = this.pipes.filter(pipe => pipe.x + pipe.width >= 0);
+    // Iteration 1: clean the screen
   }
 
   move() {
-    this.background.move();
-    this.flappybird.move();
-    this.pipes.forEach(pipe => pipe.move());
+    // Iteration 1: move the background
+    // Iteration 2: move the flappy
+    // Iteration 3: move the pipes
   }
 
   addPipes() {
-    if (this.flappybird.sprite.isReady && (this.drawPipesCount % this.pipesFrequency === 0)) {
-      this.pipes = this.pipes.concat(this.randPairOfPipes());
-      this.drawPipesCount = 0;
-    }
+    // Iteration 3: each draw pipes frequency cycles concat a pair of pipes to the pipes array and reset the draw cycle
   }
 
   randPairOfPipes() {
-    const space = this.canvas.height - this.background.footerImg.height;
-    const gap = (this.flappybird.height * 2) + this.flappybird.jumpImpulse;
-    const topSize = Math.floor(Math.random() * (space - gap) * 0.75)
-    const bottomSize = space - topSize - gap;
-    return [
-      new Pipe(this.ctx, this.canvas.width, 0, topSize, 'top'),
-      new Pipe(this.ctx, this.canvas.width, this.canvas.height - this.background.footerImg.height - bottomSize, bottomSize, 'bottom'),
-    ]
+    // Iteration 3: return two new pipes inside an array. MIND THE GAP
   }
 
   checkCollisions() {
-    const pipe = this.pipes.some(pipe => this.flappybird.collides(pipe));
-    if (pipe || (this.flappybird.y + this.flappybird.height) >= this.background.y) {
-      this.end();
-    }
+    // Iteration 4: check pipes collisions among flappy
   }
 
   checkScore() {
-    const pipe = this.pipes
-      .filter(pipe => pipe.mode === 'top')
-      .filter(pipe => !pipe.isChecked)
-      .find(pipe => pipe.x + pipe.width < this.flappybird.x);
-
-    if (pipe) {
-      pipe.isChecked = true;
-      this.score++;
-    }
+    // Bonus
   }
 
   draw() {
-    this.background.draw();
-    this.flappybird.draw();
-    this.pipes.forEach(pipe => pipe.draw());
-    this.drawPipesCount++;
-
-    this.ctx.save();
-    this.ctx.font = "30px FlappyFont";
-    this.ctx.fillStyle = "#FFFFFF";
-    this.ctx.fillText(
-      this.score,
-      10,
-      40,
-    )
-    this.ctx.font = "20px FlappyFont";
-    this.ctx.fillStyle = "#73bf2e";
-    this.ctx.fillText(
-      `best: ${this.bestScore}`,
-      10,
-      this.canvas.height - 10,
-    )
-    this.ctx.restore();
+    // Iteration 1: draw the background
+    // Iteration 2: draw the flappy
+    // Iteration 2: draw the pipes
+    // Bonus: draw the score
   }
 }

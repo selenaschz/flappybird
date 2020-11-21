@@ -9,43 +9,16 @@ class Pipe {
     this.mode = mode;
 
     this.img = new Image();
-    this.img.src = `assets/img/pipe-${mode}.png`;
-    this.img.isReady = false;
-    this.img.onload = () => {
-      this.img.isReady = true;
-      this.width = this.img.width;
-    }
-    this.isChecked = false;
+    // iteration 3: load the source checking the mode and setup this.with (must be the image with)
   }
 
   draw() {
     if (this.img.isReady) {
-
-      let ySeek = 0;
-      switch (this.mode) {
-        case 'top':
-          ySeek = (this.height > this.img.height) ? 0 : this.img.height - this.height;
-          break;
-        case 'bottom':
-          ySeek = 0
-          break;
-      }
-
-      this.ctx.drawImage(
-        this.img,
-        0,
-        ySeek,
-        Math.min(this.img.width, this.width),
-        Math.min(this.img.height, this.height),
-        this.x,
-        this.y,
-        this.width,
-        this.height
-      );
+      // iteration 3: draw the pipe don't worry if looks unscaled
     }
   }
 
   move () {
-    this.x -= this.vx;
+    // iteration 3: move the pipe
   }
 }
