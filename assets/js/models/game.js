@@ -9,9 +9,7 @@ class Game {
     this.drawIntervalId = undefined;
     this.fps = 1000 / 60;
 
-    // iteration 1: setup the backgound
-
-    // iteration 2: setup the flappy
+    // iteration 1: setup the background
 
     // iteration 2: setup the flappy
 
@@ -28,7 +26,11 @@ class Game {
   }
 
   start() {
-    // Iteration 1: each 60f clear - move - draw - [next iterations: addPipes - checkCollisions - checkScore]
+    if (!this.drawIntervalId) {
+      this.drawIntervalId = setInterval(() => {
+        // Iteration 1: each 60f clear - move - draw - [next iterations: addPipes - checkCollisions - checkScore]
+      }, this.fps);
+    }
   }
 
   stop() {
@@ -58,11 +60,16 @@ class Game {
   }
 
   randPairOfPipes() {
-    // Iteration 3: return two new pipes inside an array. MIND THE GAP
+    const space = this.canvas.height - this.background.footerImg.height;
+    const gap = (this.flappybird.height * 2) + this.flappybird.jumpImpulse;
+    const topSize = Math.floor(Math.random() * (space - gap) * 0.75)
+    const bottomSize = space - topSize - gap;
+    // Iteration 3: return two new pipes one at the top and other at the bottom
+    return []
   }
 
   checkCollisions() {
-    // Iteration 4: check pipes collisions among flappy
+    // Iteration 4: check pipes collisions among flappy and end game if any pipe collides with the bird
   }
 
   checkScore() {
@@ -74,5 +81,7 @@ class Game {
     // Iteration 2: draw the flappy
     // Iteration 2: draw the pipes
     // Bonus: draw the score
+
+    this.drawPipesCount++;
   }
 }

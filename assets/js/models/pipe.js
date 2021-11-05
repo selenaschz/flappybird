@@ -10,12 +10,14 @@ class Pipe {
 
     this.img = new Image();
     // iteration 3: load the source checking the mode and setup this.with (must be the image with)
+    this.img.src = `assets/img/pipe-${mode}.png`;
+    this.img.onload = () => {
+      this.width = this.img.width;
+    }
   }
 
   draw() {
-    if (this.img.isReady) {
-      // iteration 3: draw the pipe don't worry if looks unscaled
-    }
+    // iteration 3: draw the pipe don't worry if looks unscaled. You can start drawing a green rectangle
   }
 
   move () {
